@@ -240,27 +240,57 @@ h2 {
   }
 
   .bouton-tactile {
-    width: 64px;
-    height: 64px;
+    width: 68px;
+    height: 68px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.16);
-    border: 2px solid rgba(255, 255, 255, 0.35);
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 26px;
+    background: linear-gradient(145deg, rgba(120, 170, 255, 0.22), rgba(60, 100, 200, 0.18));
+    border: 2px solid rgba(120, 170, 255, 0.45);
+    color: #fff;
+    font-size: 28px;
     font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
     touch-action: none;
     flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.15);
+    transition: transform 0.08s, box-shadow 0.08s, filter 0.08s;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
   }
-  .bouton-tactile.actif { background: rgba(255, 255, 255, 0.4); }
 
-  .pad-gauche, .pad-droite { display: flex; gap: 8px; align-items: center; }
+  .bouton-tactile.actif {
+    transform: scale(0.82);
+    filter: brightness(1.6);
+    box-shadow: 0 0 20px rgba(120, 200, 255, 0.7), 0 0 40px rgba(120, 200, 255, 0.35), inset 0 2px 8px rgba(255, 255, 255, 0.3);
+  }
+
+  #btn-gauche { background: linear-gradient(145deg, rgba(100, 200, 255, 0.25), rgba(40, 120, 200, 0.2)); border-color: rgba(100, 200, 255, 0.5); }
+  #btn-gauche.actif { box-shadow: 0 0 20px rgba(100, 200, 255, 0.8), 0 0 40px rgba(100, 200, 255, 0.4), inset 0 2px 8px rgba(255,255,255,0.3); }
+
+  #btn-droite { background: linear-gradient(145deg, rgba(100, 200, 255, 0.25), rgba(40, 120, 200, 0.2)); border-color: rgba(100, 200, 255, 0.5); }
+  #btn-droite.actif { box-shadow: 0 0 20px rgba(100, 200, 255, 0.8), 0 0 40px rgba(100, 200, 255, 0.4), inset 0 2px 8px rgba(255,255,255,0.3); }
 
   #btn-saut {
-    background: rgba(255, 212, 59, 0.28);
-    border-color: rgba(255, 212, 59, 0.55);
+    background: linear-gradient(145deg, rgba(255, 212, 59, 0.35), rgba(220, 160, 0, 0.25));
+    border: 2px solid rgba(255, 212, 59, 0.6);
   }
-  .start { width: 48px; height: 48px; font-size: 19px; }
+  #btn-saut.actif {
+    box-shadow: 0 0 24px rgba(255, 212, 59, 0.9), 0 0 48px rgba(255, 180, 0, 0.5), inset 0 2px 8px rgba(255,255,255,0.3);
+  }
+
+  #btn-feu {
+    background: linear-gradient(145deg, rgba(255, 100, 50, 0.35), rgba(200, 50, 0, 0.25));
+    border: 2px solid rgba(255, 120, 50, 0.6);
+  }
+  #btn-feu.actif {
+    box-shadow: 0 0 24px rgba(255, 100, 50, 0.9), 0 0 48px rgba(255, 80, 0, 0.5), inset 0 2px 8px rgba(255,255,255,0.3);
+  }
+
+  #btn-start { width: 50px; height: 50px; font-size: 20px;
+    background: linear-gradient(145deg, rgba(180, 180, 200, 0.25), rgba(100, 100, 130, 0.2));
+    border-color: rgba(180, 180, 200, 0.45);
+  }
+  #btn-start.actif { box-shadow: 0 0 18px rgba(200, 200, 255, 0.7), inset 0 2px 8px rgba(255,255,255,0.3); }
+
+  .pad-gauche, .pad-droite { display: flex; gap: 10px; align-items: center; }
 }

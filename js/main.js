@@ -181,6 +181,7 @@ function lierBouton(id, action, edge) {
     ent[action] = true;
     if (edge) ent[edge] = true;
     b.classList.add('actif');
+    if (navigator.vibrate) navigator.vibrate(action === 'saut' ? 30 : 12);
   };
   const haut = (ev) => {
     ev.preventDefault();
@@ -199,6 +200,7 @@ lierBouton('btn-saut', 'saut', 'sautPresse');
 lierBouton('btn-feu', 'courir', 'tirPresse');
 document.getElementById('btn-start').addEventListener('pointerdown', (ev) => {
   ev.preventDefault();
+  if (navigator.vibrate) navigator.vibrate(20);
   if (jeu.mode === 'jeu') { jeu.basculerPause(); montrer('ecran-pause'); }
   else if (jeu.mode === 'pause') { jeu.basculerPause(); montrer(null); }
 });
