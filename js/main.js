@@ -111,6 +111,7 @@ window.ecranFinal = function (victoire, score, pieces) {
 };
 
 function demanderNomHighscore() {
+  if (document.getElementById('overlay-nom')) return;
   const idx = (typeof window._idxRecord === 'number' && window._idxRecord >= 0) ? window._idxRecord : -1;
   if (idx < 0) return;
   const hs = SAUVEGARDE.data.highscores;
@@ -136,7 +137,9 @@ function demanderNomHighscore() {
     </div>`;
   document.body.appendChild(overlay);
   const input = document.getElementById('input-nom');
-  // Focus différé pour que le clavier mobile apparaisse
+  // Focus immédiat (dans le geste utilisateur → clavier mobile) + rappel différé (desktop)
+  input.focus();
+  input.select();
   setTimeout(() => { input.focus(); input.select(); }, 100);
   const valider = () => {
     const nom = input.value.trim().toUpperCase() || 'MARIO';
@@ -263,9 +266,9 @@ document.getElementById('btn-rejouer').addEventListener('click', () => {
   montrer(null);
 });
 document.getElementById('btn-menu-final').addEventListener('click', retourTitre);
-document.getElementById('btn-final-nom').addEventListener('pointerdown', (ev) => { ev.preventDefault(); demanderNomHighscore(); });
+document.getElementById('btn-final-nom').addEventListener('click', () => demanderNomHighscore());
 document.getElementById('btn-credits-menu').addEventListener('click', retourTitre);
-document.getElementById('btn-credits-nom').addEventListener('pointerdown', (ev) => { ev.preventDefault(); demanderNomHighscore(); });
+document.getElementById('btn-credits-nom').addEventListener('click', () => demanderNomHighscore());
 document.getElementById('btn-credits-rejouer').addEventListener('click', () => {
   Sons.jouer('clic');
   jeu.nouvellePartie(0);
@@ -273,6 +276,9 @@ document.getElementById('btn-credits-rejouer').addEventListener('click', () => {
 });
 
 window.addEventListener('keydown', (ev) => {
+  // Ne pas intercepter les touches pendant la saisie de texte (nom du highscore...)
+  const cible = ev.target;
+  if (cible && (cible.tagName === 'INPUT' || cible.tagName === 'TEXTAREA' || cible.isContentEditable)) return;
   const action = TOUCHES[ev.code];
   const estSaut = SAUT_CODES.includes(ev.code);
   if (action || estSaut) ev.preventDefault();
@@ -299,6 +305,8 @@ window.addEventListener('keydown', (ev) => {
 });
 
 window.addEventListener('keyup', (ev) => {
+  const cible = ev.target;
+  if (cible && (cible.tagName === 'INPUT' || cible.tagName === 'TEXTAREA' || cible.isContentEditable)) return;
   const action = TOUCHES[ev.code];
   if (action) ent[action] = false;
   if (SAUT_CODES.includes(ev.code)) ent.saut = false;
