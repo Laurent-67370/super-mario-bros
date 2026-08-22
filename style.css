@@ -9,6 +9,10 @@ html, body {
   user-select: none;
 }
 
+@media (pointer: coarse) {
+  html, body { overflow: auto; min-height: 100%; }
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -21,6 +25,12 @@ body {
 #cadre {
   position: relative;
   width: min(100vw, calc(100vh * 30 / 17));
+}
+
+@media (pointer: coarse) {
+  #cadre {
+    width: min(100vw, calc((100vh - 96px) * 30 / 17));
+  }
 }
 
 #cadre-inner {
