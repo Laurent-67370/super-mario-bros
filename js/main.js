@@ -116,10 +116,14 @@ function demanderNomHighscore() {
   if (idx < 0) return;
   const hs = SAUVEGARDE.data.highscores;
   if (!hs[idx]) return;
-  // Créer l'overlay directement dans le body, en dehors de #cadre
+  // Créer l'overlay DANS #cadre : en plein écran, seul le sous-arbre de
+  // l'élément fullscreen est rendu — un overlay ajouté à <body> serait
+  // invisible (et l'appui "retour" du téléphone, qui quitte le fullscreen,
+  // le ferait soudain apparaître).
+  const hote = document.getElementById('cadre') || document.body;
   const overlay = document.createElement('div');
   overlay.id = 'overlay-nom';
-  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:9999;transform:translateZ(0);touch-action:manipulation;';
+  overlay.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:9999;transform:translateZ(0);touch-action:manipulation;';
   overlay.innerHTML = `
     <div style="background:linear-gradient(135deg,#1a2030,#0f172a);border:3px solid #ffd43b;border-radius:16px;padding:28px 24px;text-align:center;max-width:340px;width:90%;box-shadow:0 8px 40px rgba(255,212,59,0.3);">
       <div style="font-size:48px;margin-bottom:8px;">🏆</div>
@@ -135,7 +139,7 @@ function demanderNomHighscore() {
         ✓ VALIDER
       </button>
     </div>`;
-  document.body.appendChild(overlay);
+  hote.appendChild(overlay);
   void overlay.offsetWidth; // Forcer le paint de la boîte avant tout focus
   const input = document.getElementById('input-nom');
   const estTactile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
