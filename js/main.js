@@ -69,8 +69,7 @@ function toast(txt) {
 window.toast = toast;
 
 window.ecranFinal = function (victoire, score, pieces) {
-  // Récupérer l'index du highscore si record (déjà ajouté par finPartie)
-  const idxRecord = window._idxRecord >= 0 ? window._idxRecord : -1;
+  const idxRecord = (typeof window._idxRecord === 'number' && window._idxRecord >= 0) ? window._idxRecord : -1;
   if (victoire) {
     const d = SAUVEGARDE.data;
     let totalEtoiles = 0;
@@ -87,54 +86,70 @@ window.ecranFinal = function (victoire, score, pieces) {
     if (totalEtoiles === totalMax) msg = '★ PARFAIT ! Toutes les étoiles ! Tu es un vrai champion ! ★';
     else if (totalEtoiles >= totalMax * 0.7) msg = 'Excellent ! Encore quelques étoiles à collectionner !';
     document.getElementById('credits-merci').textContent = msg;
-    if (idxRecord >= 0) setTimeout(() => demanderNomHighscore(idxRecord), 800);
+    if (idxRecord >= 0) {
+      const btnNom = document.getElementById('btn-credits-nom');
+      if (btnNom) btnNom.style.display = '';
+    }
     montrer('ecran-credits');
   } else {
     const titre = document.getElementById('final-titre');
     const stats = document.getElementById('final-stats');
     titre.textContent = 'GAME OVER';
     stats.innerHTML = `Score : <b>${score}</b><br>Pièces : <b>${pieces}</b> 🪙<br><br>Le royaume compte sur vous...`;
-    if (idxRecord >= 0) {
+    const btnNom = document.getElementById('btn-final-nom');
+    if (idxRecord >= 0 && btnNom) {
       stats.innerHTML += `<br><br><span style="color:#8ce99a">🏆 Nouveau record ! Tu es dans le top 10 !</span>`;
-      setTimeout(() => demanderNomHighscore(idxRecord), 800);
+      btnNom.style.display = '';
+    } else if (btnNom) {
+      btnNom.style.display = 'none';
     }
     montrer('ecran-final');
   }
 };
 
-function demanderNomHighscore(idx) {
+function demanderNomHighscore() {
+  const idx = (typeof window._idxRecord === 'number' && window._idxRecord >= 0) ? window._idxRecord : -1;
   if (idx < 0) return;
   const hs = SAUVEGARDE.data.highscores;
   if (!hs[idx]) return;
+  // Créer l'overlay directement dans le body, en dehors de #cadre
   const overlay = document.createElement('div');
   overlay.id = 'overlay-nom';
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:100;';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:9999;';
   overlay.innerHTML = `
-    <div style="background:#1a2030;border:3px solid #ffd43b;border-radius:16px;padding:28px 24px;text-align:center;max-width:340px;width:90%;">
+    <div style="background:linear-gradient(135deg,#1a2030,#0f172a);border:3px solid #ffd43b;border-radius:16px;padding:28px 24px;text-align:center;max-width:340px;width:90%;box-shadow:0 8px 40px rgba(255,212,59,0.3);">
       <div style="font-size:48px;margin-bottom:8px;">🏆</div>
-      <h2 style="color:#ffd43b;font-size:22px;margin-bottom:6px;">NOUVEAU RECORD !</h2>
-      <p style="color:#dbe4f3;font-size:15px;margin-bottom:16px;">Score : <b>${hs[idx].score}</b><br>Entre ton nom de plombier :</p>
+      <h2 style="color:#ffd43b;font-size:22px;margin-bottom:6px;font-family:Courier New,monospace;">NOUVEAU RECORD !</h2>
+      <p style="color:#dbe4f3;font-size:15px;margin-bottom:16px;font-family:Courier New,monospace;">Score : <b>${hs[idx].score}</b><br>Entre ton nom de plombier :</p>
       <input type="text" id="input-nom" maxlength="12" placeholder="MARIO" value="MARIO"
-        style="font-family:inherit;font-size:20px;font-weight:bold;text-align:center;text-transform:uppercase;
-        letter-spacing:2px;padding:10px 14px;border:3px solid #38507e;border-radius:8px;background:#0f172a;color:#ffd43b;width:80%;outline:none;margin-bottom:16px;">
+        style="font-family:Courier New,monospace;font-size:22px;font-weight:bold;text-align:center;text-transform:uppercase;
+        letter-spacing:3px;padding:12px 14px;border:3px solid #38507e;border-radius:8px;background:#0f172a;color:#ffd43b;width:80%;outline:none;margin-bottom:18px;"
+        autocomplete="off" autocapitalize="characters" spellcheck="false">
       <br>
-      <button id="btn-valider-nom" style="font-family:inherit;font-weight:bold;font-size:16px;padding:10px 28px;
+      <button id="btn-valider-nom" style="font-family:Courier New,monospace;font-weight:bold;font-size:18px;padding:12px 32px;
         color:#fff;background:linear-gradient(#f59f00,#d9740a);border:none;border-bottom:4px solid #99500a;border-radius:10px;cursor:pointer;letter-spacing:1px;">
         ✓ VALIDER
       </button>
     </div>`;
   document.body.appendChild(overlay);
   const input = document.getElementById('input-nom');
-  input.focus();
-  input.select();
+  // Focus différé pour que le clavier mobile apparaisse
+  setTimeout(() => { input.focus(); input.select(); }, 100);
   const valider = () => {
-    const nom = input.value.trim() || 'MARIO';
+    const nom = input.value.trim().toUpperCase() || 'MARIO';
     SAUVEGARDE.setNomHighscore(idx, nom);
     overlay.remove();
-    toast('🏆 ' + nom.toUpperCase() + ' entre dans la légende !');
+    toast('🏆 ' + nom + ' entre dans la légende !');
+    // Masquer le bouton "saisir nom"
+    const b1 = document.getElementById('btn-final-nom');
+    const b2 = document.getElementById('btn-credits-nom');
+    if (b1) b1.style.display = 'none';
+    if (b2) b2.style.display = 'none';
   };
   document.getElementById('btn-valider-nom').addEventListener('click', valider);
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') valider(); });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); valider(); } });
+  // Fermer si on clique en dehors
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) { overlay.remove(); } });
 }
 
 function afficherHighscores() {
@@ -245,7 +260,9 @@ document.getElementById('btn-rejouer').addEventListener('click', () => {
   montrer(null);
 });
 document.getElementById('btn-menu-final').addEventListener('click', retourTitre);
+document.getElementById('btn-final-nom').addEventListener('click', demanderNomHighscore);
 document.getElementById('btn-credits-menu').addEventListener('click', retourTitre);
+document.getElementById('btn-credits-nom').addEventListener('click', demanderNomHighscore);
 document.getElementById('btn-credits-rejouer').addEventListener('click', () => {
   Sons.jouer('clic');
   jeu.nouvellePartie(0);
