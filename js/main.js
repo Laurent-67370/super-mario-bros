@@ -119,7 +119,7 @@ function demanderNomHighscore() {
   // Créer l'overlay directement dans le body, en dehors de #cadre
   const overlay = document.createElement('div');
   overlay.id = 'overlay-nom';
-  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:9999;';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:9999;transform:translateZ(0);touch-action:manipulation;';
   overlay.innerHTML = `
     <div style="background:linear-gradient(135deg,#1a2030,#0f172a);border:3px solid #ffd43b;border-radius:16px;padding:28px 24px;text-align:center;max-width:340px;width:90%;box-shadow:0 8px 40px rgba(255,212,59,0.3);">
       <div style="font-size:48px;margin-bottom:8px;">🏆</div>
@@ -136,11 +136,25 @@ function demanderNomHighscore() {
       </button>
     </div>`;
   document.body.appendChild(overlay);
+  void overlay.offsetWidth; // Forcer le paint de la boîte avant tout focus
   const input = document.getElementById('input-nom');
-  // Focus immédiat (dans le geste utilisateur → clavier mobile) + rappel différé (desktop)
-  input.focus();
-  input.select();
-  setTimeout(() => { input.focus(); input.select(); }, 100);
+  const estTactile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  if (estTactile) {
+    // Mobile : focus différé — ouvrir le clavier dans la même frame que la
+    // création empêche le paint de l'overlay sur certains navigateurs
+    // (boîte invisible jusqu'au prochain redessin). La boîte s'affiche
+    // d'abord ; le clavier suit, ou l'utilisateur touche le champ.
+    setTimeout(() => {
+      if (!input.isConnected) return;
+      try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
+      input.select();
+    }, 300);
+  } else {
+    // Desktop : focus immédiat + rappel différé
+    input.focus();
+    input.select();
+    setTimeout(() => { input.focus(); input.select(); }, 100);
+  }
   const valider = () => {
     const nom = input.value.trim().toUpperCase() || 'MARIO';
     SAUVEGARDE.setNomHighscore(idx, nom);
