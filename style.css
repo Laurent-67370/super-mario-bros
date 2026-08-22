@@ -11,13 +11,21 @@ html, body {
 
 body {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 6px;
+  padding: 6px;
 }
 
 #cadre {
   position: relative;
   width: min(100vw, calc(100vh * 30 / 17));
+}
+
+#cadre-inner {
+  position: relative;
+  width: 100%;
   aspect-ratio: 30 / 17;
 }
 
@@ -208,10 +216,20 @@ h2 {
 #commandes-tactile { display: none; }
 
 @media (pointer: coarse) {
-  #commandes-tactile { display: block; position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+  #commandes-tactile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 80px;
+    padding: 0 10px;
+    gap: 8px;
+    user-select: none;
+    -webkit-user-select: none;
+    flex-shrink: 0;
+  }
+
   .bouton-tactile {
-    position: absolute;
-    bottom: 4%;
     width: 64px;
     height: 64px;
     border-radius: 50%;
@@ -223,18 +241,16 @@ h2 {
     display: flex;
     align-items: center;
     justify-content: center;
-    pointer-events: auto;
     touch-action: none;
+    flex-shrink: 0;
   }
   .bouton-tactile.actif { background: rgba(255, 255, 255, 0.4); }
-  .direction { left: 4%; }
-  #btn-droite { left: calc(4% + 76px); }
-  .action { right: 4%; }
+
+  .pad-gauche, .pad-droite { display: flex; gap: 8px; align-items: center; }
+
   #btn-saut {
-    right: calc(4% + 76px);
     background: rgba(255, 212, 59, 0.28);
     border-color: rgba(255, 212, 59, 0.55);
   }
-  .start { right: 4%; bottom: calc(4% + 78px); width: 48px; height: 48px; font-size: 19px; }
-  #btn-feu { bottom: 4%; }
+  .start { width: 48px; height: 48px; font-size: 19px; }
 }

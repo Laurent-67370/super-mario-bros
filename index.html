@@ -9,108 +9,114 @@
 </head>
 <body>
 <div id="cadre">
-  <canvas id="jeu"></canvas>
+  <div id="cadre-inner">
+    <canvas id="jeu"></canvas>
+
+    <div class="ecran visible" id="ecran-titre">
+      <div id="logo">
+        <span class="logo-ligne">SUPER</span>
+        <span class="logo-ligne grand">MARIO BROS</span>
+      </div>
+      <div id="titre-mascotte">🍄</div>
+      <p id="titre-meilleur">Bienvenue dans le royaume !</p>
+      <div class="colonne-boutons">
+        <button class="gros-bouton principal" id="btn-jouer">▶ JOUER</button>
+        <button class="gros-bouton" id="btn-niveaux">🗺 CHOISIR UN NIVEAU</button>
+        <button class="gros-bouton" id="btn-aide">❓ AIDE</button>
+        <button class="gros-bouton petit" id="btn-son-titre">🔊 SON : ON</button>
+      </div>
+      <p id="titre-version">3 mondes · 12 niveaux · un boss par château 🏰</p>
+    </div>
+
+    <div class="ecran" id="ecran-niveaux">
+      <h2>🗺 CHOISIS TON NIVEAU</h2>
+      <p class="legende">★ terminé · ★★ toutes les pièces · ★★★ sans mourir</p>
+      <div id="grille-niveaux"></div>
+      <button class="gros-bouton" id="btn-retour-niveaux">← RETOUR</button>
+    </div>
+
+    <div class="ecran" id="ecran-aide">
+      <h2>❓ AIDE</h2>
+      <div id="contenu-aide">
+        <section>
+          <h3>🎮 Contrôles clavier</h3>
+          <table>
+            <tr><td>Se déplacer</td><td>← → (ou Q / D)</td></tr>
+            <tr><td>Sauter (maintiens pour sauter plus haut)</td><td>ESPACE, ↑ ou Z</td></tr>
+            <tr><td>Courir / Tirer du feu 🔥</td><td>MAJ ou X</td></tr>
+            <tr><td>S'accroupir</td><td>↓ ou S</td></tr>
+            <tr><td>Pause</td><td>ÉCHAP ou P</td></tr>
+          </table>
+          <p class="astuce-aide">📱 Sur mobile : boutons tactiles en bas de l'écran.</p>
+        </section>
+        <section>
+          <h3>🎁 Objets</h3>
+          <table>
+            <tr><td>🪙 Pièce</td><td>+200 pts — 100 pièces = 1 vie !</td></tr>
+            <tr><td>🍄 Champignon</td><td>Deviens grand (casse les briques !)</td></tr>
+            <tr><td>🌸 Fleur de feu</td><td>Tire des boules de feu avec MAJ/X</td></tr>
+            <tr><td>⭐ Étoile</td><td>Invincible 10 secondes !</td></tr>
+            <tr><td>1-UP (bloc ?)</td><td>+1 vie ❤</td></tr>
+          </table>
+        </section>
+        <section>
+          <h3>👾 Ennemis</h3>
+          <table>
+            <tr><td>Goomba 🟤</td><td>Écrase-le en sautant dessus</td></tr>
+            <tr><td>Koopa 🐢</td><td>Écrase-le puis... donne un coup de pied dans sa carapace !</td></tr>
+            <tr><td>Papillon volant 🦋</td><td>Écrasable en l'air</td></tr>
+            <tr><td>Piquant 🟣</td><td>NE PAS sauter dessus ! Feu ou carapace seulement</td></tr>
+            <tr><td>Plante carnivore 🌺</td><td>Attend qu'elle rentre dans le tuyau</td></tr>
+            <tr><td>Rex 👑</td><td>Boss des châteaux : boules de feu, ou coupe le pont à la hache !</td></tr>
+          </table>
+        </section>
+        <section>
+          <h3>💡 Astuces</h3>
+          <ul>
+            <li>🚩 Un checkpoint au milieu de chaque niveau</li>
+            <li>🏁 Attrape le mât le plus HAUT possible pour plus de points</li>
+            <li>⭐ 3 étoiles par niveau : finir, toutes les pièces, sans mourir</li>
+            <li>🧱 Grand = briques cassables (et pièces cachées au-dessus !)</li>
+            <li>⚡ Enchaîne les écrasements sans toucher le sol pour du gros score</li>
+          </ul>
+        </section>
+      </div>
+      <button class="gros-bouton" id="btn-retour-aide">← RETOUR</button>
+    </div>
+
+    <div class="ecran" id="ecran-pause">
+      <h2>⏸ PAUSE</h2>
+      <div class="colonne-boutons">
+        <button class="gros-bouton principal" id="btn-reprendre">▶ REPRENDRE</button>
+        <button class="gros-bouton" id="btn-recommencer">🔄 RECOMMENCER LE NIVEAU</button>
+        <button class="gros-bouton petit" id="btn-son-pause">🔊 SON : ON</button>
+        <button class="gros-bouton" id="btn-menu-pause">🏠 MENU PRINCIPAL</button>
+      </div>
+    </div>
+
+    <div class="ecran" id="ecran-final">
+      <h2 id="final-titre">GAME OVER</h2>
+      <p id="final-stats"></p>
+      <div class="colonne-boutons">
+        <button class="gros-bouton principal" id="btn-rejouer">🔄 REJOUER</button>
+        <button class="gros-bouton" id="btn-menu-final">🏠 MENU</button>
+      </div>
+    </div>
+
+    <div id="toast"></div>
+  </div>
 
   <div id="commandes-tactile">
-    <div class="bouton-tactile direction" id="btn-gauche">◀</div>
-    <div class="bouton-tactile direction" id="btn-droite">▶</div>
-    <div class="bouton-tactile action feu" id="btn-feu">🔥</div>
-    <div class="bouton-tactile action saut" id="btn-saut">A</div>
+    <div class="pad-gauche">
+      <div class="bouton-tactile direction" id="btn-gauche">◀</div>
+      <div class="bouton-tactile direction" id="btn-droite">▶</div>
+    </div>
     <div class="bouton-tactile start" id="btn-start">⏸</div>
-  </div>
-
-  <div class="ecran visible" id="ecran-titre">
-    <div id="logo">
-      <span class="logo-ligne">SUPER</span>
-      <span class="logo-ligne grand">MARIO BROS</span>
-    </div>
-    <div id="titre-mascotte">🍄</div>
-    <p id="titre-meilleur">Bienvenue dans le royaume !</p>
-    <div class="colonne-boutons">
-      <button class="gros-bouton principal" id="btn-jouer">▶ JOUER</button>
-      <button class="gros-bouton" id="btn-niveaux">🗺 CHOISIR UN NIVEAU</button>
-      <button class="gros-bouton" id="btn-aide">❓ AIDE</button>
-      <button class="gros-bouton petit" id="btn-son-titre">🔊 SON : ON</button>
-    </div>
-    <p id="titre-version">3 mondes · 12 niveaux · un boss par château 🏰</p>
-  </div>
-
-  <div class="ecran" id="ecran-niveaux">
-    <h2>🗺 CHOISIS TON NIVEAU</h2>
-    <p class="legende">★ terminé · ★★ toutes les pièces · ★★★ sans mourir</p>
-    <div id="grille-niveaux"></div>
-    <button class="gros-bouton" id="btn-retour-niveaux">← RETOUR</button>
-  </div>
-
-  <div class="ecran" id="ecran-aide">
-    <h2>❓ AIDE</h2>
-    <div id="contenu-aide">
-      <section>
-        <h3>🎮 Contrôles clavier</h3>
-        <table>
-          <tr><td>Se déplacer</td><td>← → (ou Q / D)</td></tr>
-          <tr><td>Sauter (maintiens pour sauter plus haut)</td><td>ESPACE, ↑ ou Z</td></tr>
-          <tr><td>Courir / Tirer du feu 🔥</td><td>MAJ ou X</td></tr>
-          <tr><td>S'accroupir</td><td>↓ ou S</td></tr>
-          <tr><td>Pause</td><td>ÉCHAP ou P</td></tr>
-        </table>
-        <p class="astuce-aide">📱 Sur mobile : boutons tactiles en bas de l'écran.</p>
-      </section>
-      <section>
-        <h3>🎁 Objets</h3>
-        <table>
-          <tr><td>🪙 Pièce</td><td>+200 pts — 100 pièces = 1 vie !</td></tr>
-          <tr><td>🍄 Champignon</td><td>Deviens grand (casse les briques !)</td></tr>
-          <tr><td>🌸 Fleur de feu</td><td>Tire des boules de feu avec MAJ/X</td></tr>
-          <tr><td>⭐ Étoile</td><td>Invincible 10 secondes !</td></tr>
-          <tr><td>1-UP (bloc ?)</td><td>+1 vie ❤</td></tr>
-        </table>
-      </section>
-      <section>
-        <h3>👾 Ennemis</h3>
-        <table>
-          <tr><td>Goomba 🟤</td><td>Écrase-le en sautant dessus</td></tr>
-          <tr><td>Koopa 🐢</td><td>Écrase-le puis... donne un coup de pied dans sa carapace !</td></tr>
-          <tr><td>Papillon volant 🦋</td><td>Écrasable en l'air</td></tr>
-          <tr><td>Piquant 🟣</td><td>NE PAS sauter dessus ! Feu ou carapace seulement</td></tr>
-          <tr><td>Plante carnivore 🌺</td><td>Attend qu'elle rentre dans le tuyau</td></tr>
-          <tr><td>Rex 👑</td><td>Boss des châteaux : boules de feu, ou coupe le pont à la hache !</td></tr>
-        </table>
-      </section>
-      <section>
-        <h3>💡 Astuces</h3>
-        <ul>
-          <li>🚩 Un checkpoint au milieu de chaque niveau</li>
-          <li>🏁 Attrape le mât le plus HAUT possible pour plus de points</li>
-          <li>⭐ 3 étoiles par niveau : finir, toutes les pièces, sans mourir</li>
-          <li>🧱 Grand = briques cassables (et pièces cachées au-dessus !)</li>
-          <li>⚡ Enchaîne les écrasements sans toucher le sol pour du gros score</li>
-        </ul>
-      </section>
-    </div>
-    <button class="gros-bouton" id="btn-retour-aide">← RETOUR</button>
-  </div>
-
-  <div class="ecran" id="ecran-pause">
-    <h2>⏸ PAUSE</h2>
-    <div class="colonne-boutons">
-      <button class="gros-bouton principal" id="btn-reprendre">▶ REPRENDRE</button>
-      <button class="gros-bouton" id="btn-recommencer">🔄 RECOMMENCER LE NIVEAU</button>
-      <button class="gros-bouton petit" id="btn-son-pause">🔊 SON : ON</button>
-      <button class="gros-bouton" id="btn-menu-pause">🏠 MENU PRINCIPAL</button>
+    <div class="pad-droite">
+      <div class="bouton-tactile action feu" id="btn-feu">🔥</div>
+      <div class="bouton-tactile action saut" id="btn-saut">A</div>
     </div>
   </div>
-
-  <div class="ecran" id="ecran-final">
-    <h2 id="final-titre">GAME OVER</h2>
-    <p id="final-stats"></p>
-    <div class="colonne-boutons">
-      <button class="gros-bouton principal" id="btn-rejouer">🔄 REJOUER</button>
-      <button class="gros-bouton" id="btn-menu-final">🏠 MENU</button>
-    </div>
-  </div>
-
-  <div id="toast"></div>
 </div>
 
 <script src="js/audio.js"></script>
