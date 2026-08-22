@@ -292,5 +292,11 @@ h2 {
   }
   #btn-start.actif { box-shadow: 0 0 18px rgba(200, 200, 255, 0.7), inset 0 2px 8px rgba(255,255,255,0.3); }
 
+  #btn-fs { width: 50px; height: 50px; font-size: 20px;
+    background: linear-gradient(145deg, rgba(100, 255, 150, 0.25), rgba(0, 180, 80, 0.2));
+    border-color: rgba(100, 255, 150, 0.45);
+  }
+  #btn-fs.actif { box-shadow: 0 0 18px rgba(100, 255, 150, 0.7), inset 0 2px 8px rgba(255,255,255,0.3); }
+
   .pad-gauche, .pad-droite { display: flex; gap: 10px; align-items: center; }
 }

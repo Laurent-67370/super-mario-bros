@@ -161,6 +161,9 @@ window.addEventListener('keydown', (ev) => {
     if (jeu.mode === 'jeu') { jeu.basculerPause(); montrer('ecran-pause'); }
     else if (jeu.mode === 'pause') { jeu.basculerPause(); montrer(null); }
   }
+  if (ev.code === 'KeyF') {
+    basculerPleinEcran();
+  }
 });
 
 window.addEventListener('keyup', (ev) => {
@@ -171,6 +174,24 @@ window.addEventListener('keyup', (ev) => {
 
 window.addEventListener('blur', () => {
   ent.gauche = ent.droite = ent.bas = ent.saut = ent.courir = false;
+});
+
+function basculerPleinEcran() {
+  const el = document.getElementById('cadre');
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  } else {
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
+}
+
+document.getElementById('btn-plein-ecran').addEventListener('click', basculerPleinEcran);
+document.getElementById('btn-fs').addEventListener('pointerdown', (ev) => {
+  ev.preventDefault();
+  if (navigator.vibrate) navigator.vibrate(15);
+  basculerPleinEcran();
 });
 
 function lierBouton(id, action, edge) {
