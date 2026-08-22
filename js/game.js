@@ -498,8 +498,23 @@ class Jeu {
     if (this.planteRects) {
       for (const r of this.planteRects) {
         if (chevauche(j, r)) {
-          if (j.blesser()) this.mourirJoueur(false);
-          else this.tremble(3);
+          const stompPlante = j.vy > 0.5 && j.y + j.h - j.vy <= r.y + 12;
+          if (stompPlante) {
+            // Écraser la plante par le haut
+            for (const pl of this.plantes) {
+              if (pl.mort) continue;
+              const pr = pl.rect();
+              if (chevauche(j, pr)) {
+                pl.mort = true;
+                this.tuerEnnemi(pl, 'ecrase', 200);
+                this.rebond();
+                break;
+              }
+            }
+          } else {
+            if (j.blesser()) this.mourirJoueur(false);
+            else this.tremble(3);
+          }
           break;
         }
       }
