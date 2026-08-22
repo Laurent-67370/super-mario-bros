@@ -57,6 +57,9 @@ const SAUT_CODES = ['Space', 'ArrowUp', 'KeyW', 'KeyZ'];
 function montrer(id) {
   document.querySelectorAll('.ecran').forEach((el) => el.classList.remove('visible'));
   if (id) document.getElementById(id).classList.add('visible');
+  // Masquer/afficher les contrôles tactiles selon qu'un écran est visible
+  const cmds = document.getElementById('commandes-tactile');
+  if (cmds) cmds.style.display = id ? 'none' : '';
 }
 
 function toast(txt) {
@@ -260,9 +263,9 @@ document.getElementById('btn-rejouer').addEventListener('click', () => {
   montrer(null);
 });
 document.getElementById('btn-menu-final').addEventListener('click', retourTitre);
-document.getElementById('btn-final-nom').addEventListener('click', demanderNomHighscore);
+document.getElementById('btn-final-nom').addEventListener('pointerdown', (ev) => { ev.preventDefault(); demanderNomHighscore(); });
 document.getElementById('btn-credits-menu').addEventListener('click', retourTitre);
-document.getElementById('btn-credits-nom').addEventListener('click', demanderNomHighscore);
+document.getElementById('btn-credits-nom').addEventListener('pointerdown', (ev) => { ev.preventDefault(); demanderNomHighscore(); });
 document.getElementById('btn-credits-rejouer').addEventListener('click', () => {
   Sons.jouer('clic');
   jeu.nouvellePartie(0);
