@@ -13,6 +13,25 @@ html, body {
   html, body { overflow: auto; min-height: 100%; }
 }
 
+/* Plein écran : #cadre devient le conteneur principal */
+#cadre:fullscreen,
+#cadre:-webkit-full-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: #070a16;
+  padding: 4px;
+}
+#cadre:fullscreen #cadre-inner,
+#cadre:-webkit-full-screen #cadre-inner {
+  width: min(100vw, calc((100vh - 92px) * 30 / 17));
+  max-height: calc(100vh - 92px);
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -37,6 +56,7 @@ body {
   position: relative;
   width: 100%;
   aspect-ratio: 30 / 17;
+  max-height: 100%;
 }
 
 canvas#jeu {
