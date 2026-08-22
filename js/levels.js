@@ -107,35 +107,37 @@ const NIVEAUX = [
     id: '1-3', monde: 1, niv: 3, theme: 'ciel', nom: 'Îles du ciel', largeur: 168,
     astuce: 'Les plateformes bougent : vise tes sauts !',
     creer(c) {
-      c.sol(0, 22); c.sol(30, 42); c.sol(54, 64); c.sol(76, 90); c.sol(104, 118); c.sol(132, 167);
+      c.sol(0, 24); c.sol(30, 42); c.sol(48, 58); c.sol(64, 76); c.sol(82, 96); c.sol(102, 118); c.sol(126, 167);
       c.bloc(2, 13, '@');
-      // Gap 22→30 (8 tuiles) : 2 plateformes rapprochées
-      c.plateforme(24, 11, '-', 2, 0.9);
-      c.plateforme(27, 9, '-', 2, 0.8);
+      // Gap 24→30 (6) : plateforme à x=27
+      c.plateforme(27, 11, '-', 2, 0.9);
       c.ennemi('f', 34, 8);
       c.pieces(31, 10, 4);
       c.bloc(37, 10, 'M');
-      // Gap 42→54 (12 tuiles) : 3 plateformes
+      // Gap 42→48 (6) : plateforme à x=45
       c.plateforme(45, 10, '-', 2, 0.9);
-      c.plateforme(49, 8, '|', 2, 0.9);
-      c.ennemi('f', 58, 7);
-      c.bloc(57, 9, '?');
-      // Gap 64→76 (12 tuiles) : 2 plateformes
-      c.plateforme(67, 10, '-', 2, 1);
-      c.plateforme(71, 8, '-', 2, 1);
-      c.plateforme(96, 10, '|', 2, 1);
-      c.pieces(77, 10, 5);
-      c.bloc(80, 13, '*');
-      c.bloc(82, 6, 'S');
-      c.ennemi('s', 86);
+      // Gap 58→64 (6) : plateforme à x=61
+      c.plateforme(61, 9, '|', 2, 0.9);
+      c.ennemi('f', 54, 7);
+      c.bloc(53, 9, '?');
+      // Gap 76→82 (6) : plateforme à x=79
+      c.plateforme(79, 10, '-', 2, 1);
+      c.pieces(65, 10, 4);
+      c.bloc(68, 13, '*');
+      c.bloc(70, 6, 'S');
+      c.ennemi('s', 88);
+      // Gap 96→102 (6) : plateforme à x=99
+      c.plateforme(99, 10, '|', 2, 1);
       c.ennemi('k', 108);
-      c.plateforme(120, 9, '-', 2, 1);
       c.ennemi('f', 110, 8);
+      // Gap 118→126 (8) : 2 plateformes à x=121 et x=124
+      c.plateforme(121, 10, '-', 2, 1);
+      c.plateforme(124, 8, '-', 2, 0.9);
       c.pieces(107, 10, 4);
-      c.ennemi('g', 134); c.ennemi('g', 137); c.ennemi('g', 140);
-      c.bloc(138, 10, 'U');
-      c.pieces(144, 9, 5);
-      c.escalier(150, 7);
+      c.ennemi('g', 128); c.ennemi('g', 131); c.ennemi('g', 134);
+      c.bloc(132, 10, 'U');
+      c.pieces(138, 9, 5);
+      c.escalier(144, 7);
       c.bloc(162, 13, 'F');
     },
   },
