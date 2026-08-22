@@ -1,10 +1,11 @@
 const SAUVEGARDE = (() => {
   const CLE = 'smb_save_v1';
-  let data = { deverrouille: 0, etoiles: {}, records: {}, meilleur: 0 };
+  let data = { deverrouille: 0, etoiles: {}, records: {}, meilleur: 0, highscores: [] };
   try {
     const brut = localStorage.getItem(CLE);
     if (brut) data = Object.assign(data, JSON.parse(brut));
   } catch (e) {}
+  if (!data.highscores) data.highscores = [];
   function sauver() {
     try { localStorage.setItem(CLE, JSON.stringify(data)); } catch (e) {}
   }
@@ -18,11 +19,24 @@ const SAUVEGARDE = (() => {
     data.meilleur = Math.max(data.meilleur, stats.score);
     sauver();
   }
-  function finPartie(score) {
+  function finPartie(score, pieces, victoire) {
     data.meilleur = Math.max(data.meilleur, score);
+    // Enregistrer dans les highscores
+    data.highscores.push({ nom: 'MARIO', score, pieces, victoire, date: Date.now() });
+    data.highscores.sort((a, b) => b.score - a.score);
+    data.highscores = data.highscores.slice(0, 10);
     sauver();
   }
-  return { data, sauver, apresNiveau, finPartie };
+  function setNomHighscore(idx, nom) {
+    if (data.highscores[idx]) {
+      data.highscores[idx].nom = nom.slice(0, 12).toUpperCase() || 'MARIO';
+      sauver();
+    }
+  }
+  function estNouveauRecord(score) {
+    return data.highscores.length < 10 || score > (data.highscores[data.highscores.length - 1]?.score || 0);
+  }
+  return { data, sauver, apresNiveau, finPartie, setNomHighscore, estNouveauRecord };
 })();
 window.progression = SAUVEGARDE;
 
@@ -53,7 +67,6 @@ window.toast = toast;
 
 window.ecranFinal = function (victoire, score, pieces) {
   if (victoire) {
-    // Écran crédits avec stats complètes
     const d = SAUVEGARDE.data;
     let totalEtoiles = 0;
     NIVEAUX.forEach((_, i) => { totalEtoiles += (d.etoiles[i] || 0); });
@@ -69,15 +82,83 @@ window.ecranFinal = function (victoire, score, pieces) {
     if (totalEtoiles === totalMax) msg = '★ PARFAIT ! Toutes les étoiles ! Tu es un vrai champion ! ★';
     else if (totalEtoiles >= totalMax * 0.7) msg = 'Excellent ! Encore quelques étoiles à collectionner !';
     document.getElementById('credits-merci').textContent = msg;
+    if (SAUVEGARDE.estNouveauRecord(score)) {
+      setTimeout(() => demanderNomHighscore(score), 800);
+    }
     montrer('ecran-credits');
   } else {
     const titre = document.getElementById('final-titre');
     const stats = document.getElementById('final-stats');
     titre.textContent = 'GAME OVER';
     stats.innerHTML = `Score : <b>${score}</b><br>Pièces : <b>${pieces}</b> 🪙<br><br>Le royaume compte sur vous...`;
+    if (SAUVEGARDE.estNouveauRecord(score)) {
+      stats.innerHTML += `<br><br><span style="color:#8ce99a">🏆 Nouveau record ! Tu es dans le top 10 !</span>`;
+      setTimeout(() => demanderNomHighscore(score), 800);
+    }
     montrer('ecran-final');
   }
 };
+
+function demanderNomHighscore(score) {
+  const hs = SAUVEGARDE.data.highscores;
+  const idx = hs.findIndex((h) => h.score === score && h.nom === 'MARIO');
+  if (idx === -1) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'overlay-nom';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:100;';
+  overlay.innerHTML = `
+    <div style="background:#1a2030;border:3px solid #ffd43b;border-radius:16px;padding:28px 24px;text-align:center;max-width:340px;width:90%;">
+      <div style="font-size:48px;margin-bottom:8px;">🏆</div>
+      <h2 style="color:#ffd43b;font-size:22px;margin-bottom:6px;">NOUVEAU RECORD !</h2>
+      <p style="color:#dbe4f3;font-size:15px;margin-bottom:16px;">Score : <b>${score}</b><br>Entre ton nom de plombier :</p>
+      <input type="text" id="input-nom" maxlength="12" placeholder="MARIO" value="MARIO"
+        style="font-family:inherit;font-size:20px;font-weight:bold;text-align:center;text-transform:uppercase;
+        letter-spacing:2px;padding:10px 14px;border:3px solid #38507e;border-radius:8px;background:#0f172a;color:#ffd43b;width:80%;outline:none;margin-bottom:16px;">
+      <br>
+      <button id="btn-valider-nom" style="font-family:inherit;font-weight:bold;font-size:16px;padding:10px 28px;
+        color:#fff;background:linear-gradient(#f59f00,#d9740a);border:none;border-bottom:4px solid #99500a;border-radius:10px;cursor:pointer;letter-spacing:1px;">
+        ✓ VALIDER
+      </button>
+    </div>`;
+  document.body.appendChild(overlay);
+  const input = document.getElementById('input-nom');
+  input.focus();
+  input.select();
+  const valider = () => {
+    const nom = input.value.trim() || 'MARIO';
+    SAUVEGARDE.setNomHighscore(idx, nom);
+    overlay.remove();
+    toast('🏆 ' + nom.toUpperCase() + ' entre dans la légende !');
+  };
+  document.getElementById('btn-valider-nom').addEventListener('click', valider);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') valider(); });
+}
+
+function afficherHighscores() {
+  Sons.reprendre();
+  Sons.jouer('clic');
+  const hs = SAUVEGARDE.data.highscores || [];
+  const cont = document.getElementById('liste-highscores');
+  if (hs.length === 0) {
+    cont.innerHTML = '<p style="color:#5d6b80;font-size:16px;text-align:center;padding:20px;">Aucun score encore ! Sois le premier à entrer dans la légende 🏆</p>';
+  } else {
+    const medals = ['🥇','🥈','🥉'];
+    const lignes = hs.map((h, i) => {
+      const medal = i < 3 ? medals[i] : `<span style="color:#5d6b80">${i + 1}</span>`;
+      const date = new Date(h.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+      const v = h.victoire ? ' 🏰' : '';
+      return `<div class="ligne-hs ${i === 0 ? 'hs-premier' : ''}">
+        <span class="hs-rang">${medal}</span>
+        <span class="hs-nom">${h.nom}</span>
+        <span class="hs-score">${h.score.toLocaleString('fr-FR')}</span>
+        <span class="hs-pieces">${h.pieces} 🪙</span>
+        <span class="hs-date">${date}${v}</span>
+      </div>`;
+    }).join('');
+    cont.innerHTML = lignes;
+  }
+  montrer('ecran-highscores');
+}
 
 function majTitre() {
   const d = SAUVEGARDE.data;
@@ -144,6 +225,8 @@ function basculerSon() {
 document.getElementById('btn-jouer').addEventListener('click', demarrerJeu);
 document.getElementById('btn-niveaux').addEventListener('click', ouvrirNiveaux);
 document.getElementById('btn-aide').addEventListener('click', () => { Sons.reprendre(); Sons.jouer('clic'); montrer('ecran-aide'); });
+document.getElementById('btn-highscores').addEventListener('click', afficherHighscores);
+document.getElementById('btn-retour-highscores').addEventListener('click', () => { Sons.jouer('clic'); retourTitre(); });
 document.getElementById('btn-son-titre').addEventListener('click', basculerSon);
 document.getElementById('btn-son-pause').addEventListener('click', basculerSon);
 document.getElementById('btn-retour-niveaux').addEventListener('click', () => { Sons.jouer('clic'); retourTitre(); });

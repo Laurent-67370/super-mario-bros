@@ -264,6 +264,37 @@ h2 {
 #credits-etoiles { color: #ffd43b; font-size: clamp(20px, 3vw, 28px); margin-bottom: 12px; }
 #credits-merci { color: #8ce99a; font-size: clamp(12px, 1.6vw, 16px); margin-bottom: 8px; }
 
+/* Highscores */
+#liste-highscores {
+  max-width: 560px;
+  width: 90%;
+  max-height: 56vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ligne-hs {
+  display: grid;
+  grid-template-columns: 40px 1fr auto auto 60px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(15, 22, 44, 0.75);
+  border: 1px solid #2c3d63;
+  border-radius: 8px;
+  font-size: clamp(12px, 1.6vw, 15px);
+}
+.ligne-hs.hs-premier {
+  background: linear-gradient(135deg, rgba(255, 212, 59, 0.18), rgba(255, 160, 0, 0.12));
+  border-color: rgba(255, 212, 59, 0.5);
+}
+.hs-rang { font-size: 20px; text-align: center; }
+.hs-nom { color: #ffd43b; font-weight: bold; letter-spacing: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hs-score { color: #74c0fc; font-weight: bold; }
+.hs-pieces { color: #9aa5b5; font-size: 0.85em; }
+.hs-date { color: #5d6b80; font-size: 0.8em; text-align: right; }
+
 #commandes-tactile { display: none; }
 
 @media (pointer: coarse) {
