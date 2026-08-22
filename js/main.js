@@ -21,11 +21,14 @@ const SAUVEGARDE = (() => {
   }
   function finPartie(score, pieces, victoire) {
     data.meilleur = Math.max(data.meilleur, score);
-    // Enregistrer dans les highscores
-    data.highscores.push({ nom: 'MARIO', score, pieces, victoire, date: Date.now() });
+    const estRecord = data.highscores.length < 10 || score > (data.highscores[data.highscores.length - 1]?.score || 0);
+    const ts = Date.now();
+    data.highscores.push({ nom: 'MARIO', score, pieces, victoire, date: ts });
     data.highscores.sort((a, b) => b.score - a.score);
     data.highscores = data.highscores.slice(0, 10);
     sauver();
+    if (!estRecord) return -1;
+    return data.highscores.findIndex((h) => h.date === ts);
   }
   function setNomHighscore(idx, nom) {
     if (data.highscores[idx]) {
@@ -66,6 +69,8 @@ function toast(txt) {
 window.toast = toast;
 
 window.ecranFinal = function (victoire, score, pieces) {
+  // Récupérer l'index du highscore si record (déjà ajouté par finPartie)
+  const idxRecord = window._idxRecord >= 0 ? window._idxRecord : -1;
   if (victoire) {
     const d = SAUVEGARDE.data;
     let totalEtoiles = 0;
@@ -82,27 +87,25 @@ window.ecranFinal = function (victoire, score, pieces) {
     if (totalEtoiles === totalMax) msg = '★ PARFAIT ! Toutes les étoiles ! Tu es un vrai champion ! ★';
     else if (totalEtoiles >= totalMax * 0.7) msg = 'Excellent ! Encore quelques étoiles à collectionner !';
     document.getElementById('credits-merci').textContent = msg;
-    if (SAUVEGARDE.estNouveauRecord(score)) {
-      setTimeout(() => demanderNomHighscore(score), 800);
-    }
+    if (idxRecord >= 0) setTimeout(() => demanderNomHighscore(idxRecord), 800);
     montrer('ecran-credits');
   } else {
     const titre = document.getElementById('final-titre');
     const stats = document.getElementById('final-stats');
     titre.textContent = 'GAME OVER';
     stats.innerHTML = `Score : <b>${score}</b><br>Pièces : <b>${pieces}</b> 🪙<br><br>Le royaume compte sur vous...`;
-    if (SAUVEGARDE.estNouveauRecord(score)) {
+    if (idxRecord >= 0) {
       stats.innerHTML += `<br><br><span style="color:#8ce99a">🏆 Nouveau record ! Tu es dans le top 10 !</span>`;
-      setTimeout(() => demanderNomHighscore(score), 800);
+      setTimeout(() => demanderNomHighscore(idxRecord), 800);
     }
     montrer('ecran-final');
   }
 };
 
-function demanderNomHighscore(score) {
+function demanderNomHighscore(idx) {
+  if (idx < 0) return;
   const hs = SAUVEGARDE.data.highscores;
-  const idx = hs.findIndex((h) => h.score === score && h.nom === 'MARIO');
-  if (idx === -1) return;
+  if (!hs[idx]) return;
   const overlay = document.createElement('div');
   overlay.id = 'overlay-nom';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:100;';
@@ -110,7 +113,7 @@ function demanderNomHighscore(score) {
     <div style="background:#1a2030;border:3px solid #ffd43b;border-radius:16px;padding:28px 24px;text-align:center;max-width:340px;width:90%;">
       <div style="font-size:48px;margin-bottom:8px;">🏆</div>
       <h2 style="color:#ffd43b;font-size:22px;margin-bottom:6px;">NOUVEAU RECORD !</h2>
-      <p style="color:#dbe4f3;font-size:15px;margin-bottom:16px;">Score : <b>${score}</b><br>Entre ton nom de plombier :</p>
+      <p style="color:#dbe4f3;font-size:15px;margin-bottom:16px;">Score : <b>${hs[idx].score}</b><br>Entre ton nom de plombier :</p>
       <input type="text" id="input-nom" maxlength="12" placeholder="MARIO" value="MARIO"
         style="font-family:inherit;font-size:20px;font-weight:bold;text-align:center;text-transform:uppercase;
         letter-spacing:2px;padding:10px 14px;border:3px solid #38507e;border-radius:8px;background:#0f172a;color:#ffd43b;width:80%;outline:none;margin-bottom:16px;">

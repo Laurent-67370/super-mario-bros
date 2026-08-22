@@ -693,7 +693,10 @@ class Jeu {
       if (this.niveauIndex >= NIVEAUX.length - 1) {
         this.mode = 'victoire';
         Sons.musique('victoire');
-        if (window.progression) window.progression.finPartie(this.score, this.pieces, true);
+        if (window.progression) {
+          const idxRec = window.progression.finPartie(this.score, this.pieces, true);
+          window._idxRecord = idxRec;
+        }
         if (window.ecranFinal) window.ecranFinal(true, this.score, this.pieces);
       } else {
         this.chargerNiveau(this.niveauIndex + 1, false);
@@ -724,7 +727,10 @@ class Jeu {
       this.vies--;
       if (this.vies <= 0) {
         this.mode = 'gameover';
-        if (window.progression) window.progression.finPartie(this.score, this.pieces, false);
+        if (window.progression) {
+          const idxRec = window.progression.finPartie(this.score, this.pieces, false);
+          window._idxRecord = idxRec;
+        }
         if (window.ecranFinal) window.ecranFinal(false, this.score, this.pieces);
       } else {
         this.chargerNiveau(this.niveauIndex, this.pointSauvegarde ? true : false);
