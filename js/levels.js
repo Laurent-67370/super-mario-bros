@@ -60,10 +60,10 @@ const NIVEAUX = [
       c.bloc(74, 9, 'M'); c.bloc(78, 6, 'U');
       c.ennemi('g', 84); c.ennemi('g', 87);
       c.escalier(94, 4);
-      c.trou(99, 101);
+      c.trou(99, 100);
       c.escalier(102, 4, -1);
       c.bloc(110, 13, '*');
-      c.trou(114, 117); c.pieces(114, 9, 4);
+      c.trou(114, 116); c.pieces(114, 9, 3);
       c.ennemi('f', 122, 9);
       c.bloc(126, 9, 'M');
       c.ennemi('s', 132);
@@ -107,12 +107,13 @@ const NIVEAUX = [
     id: '1-3', monde: 1, niv: 3, theme: 'ciel', nom: 'Îles du ciel', largeur: 168,
     astuce: 'Les plateformes bougent : vise tes sauts !',
     creer(c) {
-      c.sol(0, 14); c.sol(26, 38); c.sol(52, 60); c.sol(74, 88); c.sol(104, 118); c.sol(132, 167);
+      c.sol(0, 18); c.sol(28, 40); c.sol(52, 62); c.sol(74, 88); c.sol(102, 118); c.sol(132, 167);
       c.bloc(2, 13, '@');
-      c.plateforme(16, 10, '-', 2, 0.9);
-      c.ennemi('f', 30, 8);
-      c.pieces(27, 10, 4);
-      c.bloc(33, 10, 'M');
+      c.plateforme(20, 10, '-', 2, 0.9);
+      c.plateforme(25, 8, '-', 2, 0.8);
+      c.ennemi('f', 32, 8);
+      c.pieces(29, 10, 4);
+      c.bloc(35, 10, 'M');
       c.plateforme(44, 9, '|', 2, 0.9);
       c.ennemi('f', 56, 7);
       c.bloc(55, 9, '?');
@@ -195,7 +196,7 @@ const NIVEAUX = [
       c.plateforme(22, 12, '|', 2, 0.8);
       c.plateforme(26, 9, '|', 2, 0.9);
       c.rangee(31, 45, 6, 'X'); c.pieces(33, 5, 6);
-      c.ennemi('g', 37, 5); c.ennemi('g', 40, 5);
+      c.ennemi('g', 37, 5);
       c.rangee(52, 64, 8, 'X'); c.pieces(54, 7, 5);
       c.ennemi('k', 58, 7);
       c.bloc(58, 13, '*');
@@ -222,8 +223,8 @@ const NIVEAUX = [
       c.lave(18, 21); c.plateforme(17, 11, '-', 2, 1);
       c.lave(34, 38); c.plateforme(36, 10, '|', 2, 1);
       c.lave(52, 55); c.plateforme(51, 10, '-', 2, 1);
-      c.pics(66, 68);
-      c.ennemi('s', 76); c.ennemi('s', 79); c.ennemi('s', 82);
+      c.pics(66, 67);
+      c.ennemi('s', 76); c.ennemi('s', 82);
       c.rangee(88, 92, 9, 'B'); c.ennemi('k', 89);
       c.ennemi('g', 96); c.ennemi('g', 99);
       c.lave(102, 107); c.plateforme(101, 11, '-', 2, 1); c.plateforme(104, 8, '-', 2, 0.9);
@@ -266,14 +267,15 @@ const NIVEAUX = [
     id: '3-1', monde: 3, niv: 1, theme: 'ciel', nom: "Aurore dorée", largeur: 192,
     astuce: 'Le soleil se lève sur les dernières îles...',
     creer(c) {
-      c.sol(0, 18); c.sol(34, 46); c.sol(62, 72); c.sol(90, 104); c.sol(128, 142); c.sol(158, 191);
+      c.sol(0, 22); c.sol(36, 48); c.sol(62, 72); c.sol(90, 104); c.sol(128, 142); c.sol(158, 191);
       c.bloc(2, 13, '@');
-      c.plateforme(20, 10, '-', 2, 1);
+      c.plateforme(24, 10, '-', 2, 1);
+      c.plateforme(29, 8, '-', 2, 0.9);
       c.pieces(8, 10, 4);
-      c.ennemi('f', 38, 7);
-      c.bloc(40, 10, 'M');
-      c.pieces(35, 10, 4);
-      c.plateforme(50, 9, '|', 2, 1);
+      c.ennemi('f', 40, 7);
+      c.bloc(42, 10, 'M');
+      c.pieces(37, 10, 4);
+      c.plateforme(52, 9, '|', 2, 1);
       c.ennemi('f', 66, 6);
       c.pieces(64, 10, 4);
       c.plateforme(76, 8, '-', 3, 0.9);
@@ -336,14 +338,13 @@ const NIVEAUX = [
       c.rangee(70, 76, 9, 'B'); c.pieces(70, 5, 7); c.bloc(73, 9, 'U');
       c.ennemi('k', 80);
       c.bloc(86, 13, '*');
-      c.trou(92, 120);
-      c.pieces(94, 6, 12); c.pieces(108, 6, 10);
+      c.trou(92, 108);
+      c.pieces(94, 6, 8); c.pieces(100, 6, 6);
       c.plateforme(92, 10, '-', 2, 1.05);
-      c.plateforme(100, 8, '|', 2, 1);
-      c.plateforme(108, 9, '-', 2, 1.1);
-      c.plateforme(116, 7, '|', 2, 1);
-      c.ennemi('f', 98, 6); c.ennemi('f', 110, 5); c.ennemi('f', 118, 6);
-      c.bloc(124, 9, 'S'); c.bloc(128, 9, 'M');
+      c.plateforme(98, 8, '|', 2, 1);
+      c.plateforme(104, 9, '-', 2, 1.1);
+      c.ennemi('f', 98, 6); c.ennemi('f', 106, 7);
+      c.bloc(110, 9, 'S'); c.bloc(114, 9, 'M');
       c.ennemi('g', 132); c.ennemi('g', 135);
       c.escalier(140, 8);
       c.escalier(152, 8, -1);
@@ -372,8 +373,8 @@ const NIVEAUX = [
       c.lave(84, 98);
       c.plateforme(84, 10, '-', 2, 1); c.plateforme(90, 7, '|', 2, 1); c.plateforme(96, 10, '-', 2, 1);
       c.pieces(86, 6, 3, 4); c.pieces(92, 5, 3);
-      c.pics(104, 107);
-      c.ennemi('g', 112); c.ennemi('g', 115);
+      c.pics(104, 105);
+      c.ennemi('g', 110); c.ennemi('g', 114);
       c.lave(120, 126); c.plateforme(119, 11, '-', 2, 1.05); c.plateforme(123, 9, '-', 2, 1);
       c.pieces(127, 10, 4);
       c.lave(132, 152); c.pont(132, 152, 12);
