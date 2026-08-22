@@ -107,26 +107,31 @@ const NIVEAUX = [
     id: '1-3', monde: 1, niv: 3, theme: 'ciel', nom: 'Îles du ciel', largeur: 168,
     astuce: 'Les plateformes bougent : vise tes sauts !',
     creer(c) {
-      c.sol(0, 18); c.sol(28, 40); c.sol(52, 62); c.sol(74, 88); c.sol(102, 118); c.sol(132, 167);
+      c.sol(0, 22); c.sol(30, 42); c.sol(54, 64); c.sol(76, 90); c.sol(104, 118); c.sol(132, 167);
       c.bloc(2, 13, '@');
-      c.plateforme(20, 10, '-', 2, 0.9);
-      c.plateforme(25, 8, '-', 2, 0.8);
-      c.ennemi('f', 32, 8);
-      c.pieces(29, 10, 4);
-      c.bloc(35, 10, 'M');
-      c.plateforme(44, 9, '|', 2, 0.9);
-      c.ennemi('f', 56, 7);
-      c.bloc(55, 9, '?');
-      c.plateforme(64, 9, '-', 3, 1);
-      c.plateforme(90, 10, '|', 2, 1);
-      c.pieces(75, 10, 5);
-      c.bloc(78, 13, '*');
-      c.bloc(80, 6, 'S');
-      c.ennemi('s', 84);
-      c.ennemi('k', 106);
+      // Gap 22→30 (8 tuiles) : 2 plateformes rapprochées
+      c.plateforme(24, 11, '-', 2, 0.9);
+      c.plateforme(27, 9, '-', 2, 0.8);
+      c.ennemi('f', 34, 8);
+      c.pieces(31, 10, 4);
+      c.bloc(37, 10, 'M');
+      // Gap 42→54 (12 tuiles) : 3 plateformes
+      c.plateforme(45, 10, '-', 2, 0.9);
+      c.plateforme(49, 8, '|', 2, 0.9);
+      c.ennemi('f', 58, 7);
+      c.bloc(57, 9, '?');
+      // Gap 64→76 (12 tuiles) : 2 plateformes
+      c.plateforme(67, 10, '-', 2, 1);
+      c.plateforme(71, 8, '-', 2, 1);
+      c.plateforme(96, 10, '|', 2, 1);
+      c.pieces(77, 10, 5);
+      c.bloc(80, 13, '*');
+      c.bloc(82, 6, 'S');
+      c.ennemi('s', 86);
+      c.ennemi('k', 108);
       c.plateforme(120, 9, '-', 2, 1);
-      c.ennemi('f', 108, 8);
-      c.pieces(105, 10, 4);
+      c.ennemi('f', 110, 8);
+      c.pieces(107, 10, 4);
       c.ennemi('g', 134); c.ennemi('g', 137); c.ennemi('g', 140);
       c.bloc(138, 10, 'U');
       c.pieces(144, 9, 5);
