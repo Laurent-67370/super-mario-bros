@@ -52,16 +52,31 @@ function toast(txt) {
 window.toast = toast;
 
 window.ecranFinal = function (victoire, score, pieces) {
-  const titre = document.getElementById('final-titre');
-  const stats = document.getElementById('final-stats');
   if (victoire) {
-    titre.textContent = '🏆 FÉLICITATIONS !';
-    stats.innerHTML = `Vous avez vaincu Rex et traversé les 3 mondes !<br><br>Score final : <b>${score}</b><br>Pièces : <b>${pieces}</b> 🪙`;
+    // Écran crédits avec stats complètes
+    const d = SAUVEGARDE.data;
+    let totalEtoiles = 0;
+    NIVEAUX.forEach((_, i) => { totalEtoiles += (d.etoiles[i] || 0); });
+    const totalMax = NIVEAUX.length * 3;
+    document.getElementById('credits-texte').innerHTML =
+      `Vous avez vaincu Rex et sauvé le royaume !<br><br>` +
+      `Score final : <b>${score}</b><br>` +
+      `Pièces collectées : <b>${pieces}</b> 🪙<br><br>` +
+      `3 mondes · 12 niveaux · 3 boss vaincus 🏰`;
+    document.getElementById('credits-etoiles').textContent =
+      `${'★'.repeat(totalEtoiles)}${'☆'.repeat(totalMax - totalEtoiles)}  ${totalEtoiles}/${totalMax}`;
+    let msg = "Merci d'avoir joué ! 🎮";
+    if (totalEtoiles === totalMax) msg = '★ PARFAIT ! Toutes les étoiles ! Tu es un vrai champion ! ★';
+    else if (totalEtoiles >= totalMax * 0.7) msg = 'Excellent ! Encore quelques étoiles à collectionner !';
+    document.getElementById('credits-merci').textContent = msg;
+    montrer('ecran-credits');
   } else {
+    const titre = document.getElementById('final-titre');
+    const stats = document.getElementById('final-stats');
     titre.textContent = 'GAME OVER';
     stats.innerHTML = `Score : <b>${score}</b><br>Pièces : <b>${pieces}</b> 🪙<br><br>Le royaume compte sur vous...`;
+    montrer('ecran-final');
   }
-  montrer('ecran-final');
 };
 
 function majTitre() {
@@ -73,7 +88,12 @@ function majTitre() {
   } else {
     btn.textContent = '▶ JOUER';
   }
-  document.getElementById('titre-meilleur').textContent = d.meilleur > 0 ? 'Meilleur score : ' + d.meilleur : 'Bienvenue dans le royaume !';
+  let txt = d.meilleur > 0 ? 'Meilleur score : ' + d.meilleur : 'Bienvenue dans le royaume !';
+  let totalEtoiles = 0;
+  const totalMax = NIVEAUX.length * 3;
+  NIVEAUX.forEach((_, i) => { totalEtoiles += (d.etoiles[i] || 0); });
+  if (totalEtoiles > 0) txt += ' · ⭐ ' + totalEtoiles + '/' + totalMax;
+  document.getElementById('titre-meilleur').textContent = txt;
   const lblSon = Sons.estMuet() ? '🔇 SON : OFF' : '🔊 SON : ON';
   document.getElementById('btn-son-titre').textContent = lblSon;
   document.getElementById('btn-son-pause').textContent = lblSon;
@@ -139,6 +159,12 @@ document.getElementById('btn-rejouer').addEventListener('click', () => {
   montrer(null);
 });
 document.getElementById('btn-menu-final').addEventListener('click', retourTitre);
+document.getElementById('btn-credits-menu').addEventListener('click', retourTitre);
+document.getElementById('btn-credits-rejouer').addEventListener('click', () => {
+  Sons.jouer('clic');
+  jeu.nouvellePartie(0);
+  montrer(null);
+});
 
 window.addEventListener('keydown', (ev) => {
   const action = TOUCHES[ev.code];
@@ -176,6 +202,53 @@ window.addEventListener('blur', () => {
   ent.gauche = ent.droite = ent.bas = ent.saut = ent.courir = false;
 });
 
+// ---- Support manette (Gamepad API) ----
+let manettePrec = { saut: false, tir: false, start: false };
+function lireManette() {
+  const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+  let gp = null;
+  for (const p of pads) { if (p) { gp = p; break; } }
+  if (!gp) {
+    manettePrec.saut = false; manettePrec.tir = false; manettePrec.start = false;
+    return;
+  }
+  // Axes : stick gauche / croix directionnelle
+  const axeX = gp.axes[0] || 0;
+  const axeY = gp.axes[1] || 0;
+  ent.gauche = axeX < -0.4;
+  ent.droite = axeX > 0.4;
+  ent.bas = axeY > 0.4;
+  // Boutons standards : 0=A(saut), 1=B(courir), 2=X, 3=Y, 9=Start, 12=Haut, 13=Bas, 14=Gauche, 15=Droite
+  const btns = gp.buttons;
+  const saut = btns[0] ? btns[0].value > 0.3 : false;
+  const tir = (btns[1] && btns[1].value > 0.3) || (btns[2] && btns[2].value > 0.3) || (btns[7] && btns[7].value > 0.3);
+  ent.courir = tir;
+  const start = btns[9] ? btns[9].value > 0.3 : false;
+
+  // Edge detection pour saut et tir
+  if (saut && !manettePrec.saut) ent.sautPresse = true;
+  if (tir && !manettePrec.tir) ent.tirPresse = true;
+
+  // Start = pause
+  if (start && !manettePrec.start) {
+    if (jeu.mode === 'jeu') { jeu.basculerPause(); montrer('ecran-pause'); }
+    else if (jeu.mode === 'pause') { jeu.basculerPause(); montrer(null); }
+    else if (jeu.mode === 'titre' && document.getElementById('ecran-titre').classList.contains('visible')) {
+      demarrerJeu();
+    }
+  }
+
+  // Bouton 3 (Y) = plein écran
+  if (btns[3] && btns[3].value > 0.3 && !manettePrec.fs) { basculerPleinEcran(); manettePrec.fs = true; }
+  else if (!btns[3] || btns[3].value <= 0.3) manettePrec.fs = false;
+
+  manettePrec.saut = saut;
+  manettePrec.tir = tir;
+  manettePrec.start = start;
+}
+
+// ---- Multitouch : chaque bouton gère son propre pointer ID ----
+
 function basculerPleinEcran() {
   const el = document.getElementById('cadre');
   if (!document.fullscreenElement && !document.webkitFullscreenElement) {
@@ -196,8 +269,11 @@ document.getElementById('btn-fs').addEventListener('pointerdown', (ev) => {
 
 function lierBouton(id, action, edge) {
   const b = document.getElementById(id);
+  const pointeurs = new Set();
   const bas = (ev) => {
     ev.preventDefault();
+    pointeurs.add(ev.pointerId);
+    b.setPointerCapture(ev.pointerId);
     Sons.reprendre();
     ent[action] = true;
     if (edge) ent[edge] = true;
@@ -206,13 +282,15 @@ function lierBouton(id, action, edge) {
   };
   const haut = (ev) => {
     ev.preventDefault();
-    ent[action] = false;
-    b.classList.remove('actif');
+    pointeurs.delete(ev.pointerId);
+    if (pointeurs.size === 0) {
+      ent[action] = false;
+      b.classList.remove('actif');
+    }
   };
   b.addEventListener('pointerdown', bas);
   b.addEventListener('pointerup', haut);
   b.addEventListener('pointercancel', haut);
-  b.addEventListener('pointerleave', haut);
   b.addEventListener('contextmenu', (ev) => ev.preventDefault());
 }
 lierBouton('btn-gauche', 'gauche');
@@ -230,6 +308,7 @@ let accumulateur = 0;
 let dernierTemps = performance.now();
 function boucle(t) {
   requestAnimationFrame(boucle);
+  lireManette();
   accumulateur += Math.min(100, t - dernierTemps);
   dernierTemps = t;
   while (accumulateur >= 1000 / 60) {
